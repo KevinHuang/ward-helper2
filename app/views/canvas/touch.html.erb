@@ -1,0 +1,116 @@
+
+<link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
+<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+<script src="/js/draw_canvas.js"></script>
+
+<canvas id="myCanvas" width="800" height="600" style="border: 1px solid gray;"></canvas>
+<button onclick="clearUCtx();" >Clear</button>
+
+<div id="result" style="width:400px; height:400px; overflow:auto;">
+	
+</div>
+
+<script>
+
+	$(document).ready(function() {
+
+		//$('#myCanvas').width($(window).width()).height($(window).height());
+
+		defineTouchDrawing();
+		defineMouseDrawing();
+
+		var points = [];
+
+		//套用 Touch 畫圖行為
+		$('#myCanvas').drawTouch({
+			
+			lineWidth : 4 ,
+
+			onStart : function(evt) {
+				//$('#result').html('');
+				var html = "<div> === Start  === </div>" ;
+				$(html).appendTo('#result');
+				points=[];	//reset 
+			},
+
+			onDrawing : function(evt) {
+				points.push(evt);
+			},
+
+			onEnd : function() {
+				var jsonString = JSON.stringify(points);
+				publish(jsonString);
+
+				$('<div>' + jsonString + '</div>').appendTo('#result');
+
+				var html = "<div> === End  === </div>" ;
+				$(html).appendTo('#result');
+			}
+
+		});
+
+		//套用 Mouse 畫圖行為
+		$('#myCanvas').drawMouse({
+			
+			lineWidth : 4 ,
+
+			onStart : function(evt) {
+				$('#result').html('');
+				var html = "<div> === Start  === </div>" ;
+				$(html).appendTo('#result');
+				points=[];
+			},
+
+			onDrawing : function(evt) {
+				points.push(evt);
+			},
+
+			onEnd : function() {
+				var jsonString = JSON.stringify(points);
+				publish(jsonString);
+
+				$('<div>' + jsonString + '</div>').appendTo('#result');
+
+				var html = "<div> === End  === </div>" ;
+				$(html).appendTo('#result');
+			}
+		});
+
+	});
+
+
+
+</script>
+
+<script>
+	
+	// SEND
+    var publish = function(the_message) {
+    	
+    	$.ajax({
+		  type: "POST",
+		  url: '/canvas/save_points',
+		  data: "points=" + the_message,
+		  success: function(msg) {
+		  	//alert(msg);
+		  }
+		});
+
+    };
+
+    var clearUCtx = function() {
+    	var answer = confirm("確定要清除畫面嗎？")
+		if (answer){
+			$.get('/canvas/clear_points', function(data) {
+				//alert(data);
+				var el = document.getElementsByTagName("canvas")[0];
+		  		var ctx = el.getContext("2d");
+	        	ctx.clearRect(0,0,800,600);
+			});
+			
+		}
+    	
+    };
+
+</script>

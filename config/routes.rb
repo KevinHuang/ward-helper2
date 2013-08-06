@@ -1,4 +1,11 @@
 WardHelper2::Application.routes.draw do
+  get "canvas/touch"
+  get "canvas/touch_student"
+  get "canvas/draw"
+  post "canvas/save_points"
+  get "canvas/get_points"
+  get "canvas/clear_points"
+  get "canvas/pubnub"
   get "signin/index"
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
