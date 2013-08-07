@@ -6,7 +6,16 @@
 
 <canvas id="myCanvas" width="800" height="600" style="border: 1px solid gray;"></canvas>
 <button onclick="clearUCtx();" >Clear</button>
-
+<select onchange="setConfig()" id="selColor">
+	<option value="#FF0000">red</option>
+	<option value="#00FF00" selected="">green</option>
+	<option value="#0000FF">blue</option>
+</select>
+<select onchange="setConfig()" id="selBold">
+	<option value="5">5</option>
+	<option value="10" selected="">10</option>
+	<option value="15">15</option>
+</select>
 <div id="result" style="width:400px; height:400px; overflow:auto;">
 	
 </div>
@@ -50,10 +59,19 @@
 
 		});
 
+		//$('#myCanvas').drawTouch({ lineColor : '#0000FF', lineWidth : 10 });
+
+		//canvasTouch.setStrokeStyle('#FF0000');	//set to red color
+
+		var currentLine = 10;
+		var currentColor = '#0000FF';
+
 		//套用 Mouse 畫圖行為
 		$('#myCanvas').drawMouse({
 			
 			lineWidth : 4 ,
+
+			lineColor : '#FF0000',
 
 			onStart : function(evt) {
 				$('#result').html('');
@@ -77,7 +95,18 @@
 			}
 		});
 
+		//change line color and line width ...
+		//$('#myCanvas').drawMouse({lineWidth : 10, lineColor : '#0000FF'  });
+		
+
 	});
+
+	var setConfig = function() {
+		currentLine = $('#selBold').val();
+		currentColor = $('#selColor').val();
+		$('#myCanvas').drawMouse({lineWidth : currentLine, lineColor : currentColor  });
+		$('#myCanvas').drawTouch({ lineColor : currentColor, lineWidth : currentLine });
+	};
 
 
 
