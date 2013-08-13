@@ -1,0 +1,238 @@
+<!doctype html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" >
+		<meta charset="utf-8" >
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+		<!-- bootstrap css -->
+		<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen" >
+		<link href="/css/default.css" rel="stylesheet" >
+		<script>
+			var sket_uqid = "<%= @sket.uqid %>";
+			var sket_name ="<%= @sket.name %>";
+			var sket_content = <%= @sket.content.to_json.html_safe %>
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="toolbar">
+				<ul class="navigation">
+					<li class="play 1X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							播放
+						</a>
+					</li>
+					<li class="play 1-2X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							1/2 X
+						</a>
+					</li>
+					<li class="play 1-4X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							1/4 X
+						</a>
+					</li>
+					<li class="play 2X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							2 X
+						</a>
+					</li>
+					<li class="play 4X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							4 X
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="whiteboard" style="width:800px;height:600px;">
+				<!-- <canvas id="myCanvas" width="800" height="600" style="padding: 0px; margin: 0px; border: 0px;"></canvas> -->
+			</div>
+
+		</div>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+		<script src="/js/bootstrap.min.js" ></script>
+		<!-- <script src="/js/draw_canvas.js"></script> -->
+		<script src="/js/stroke_player.js"></script>
+		<!-- <script src="/js/sketch_ui.js"></script> -->
+
+		<script>
+	var currentColor = '#000000';
+	var currentPen = "5";
+	var currentSetting = '';
+	var targetCanvasID = 'myCanvas';	//預設產生的 Canvas ID
+	var strokes = sket_content; //所有的筆劃
+	var undoStrokes = [];	//所有後悔的步驟
+	var points =[];
+
+	var canvasWidth = 0;
+	var canvasHeight = 0;
+
+	/* 檢查 resize 是否結束了 */
+	var rtime = new Date(1, 1, 2000, 12,00,00);
+	var timeout = false;
+	var delta = 200;
+
+	var strokePlayer ;	//專門用來播放筆順的物件
+
+	var sketch_uqid = '';
+	var sketch_name ='';
+
+	
+
+	$(document).ready(function() {
+
+		/*
+			在拖拉更改視窗大小的過程會一直觸發 window.resize 事件，造成效能慢，
+			這段程式碼偵測使用者改變視窗大小的動作已結束之後，才呼叫 resizeUI()
+		 */
+		$(window).resize(function() {
+		    rtime = new Date();
+		    if (timeout === false) {
+		        timeout = true;
+		        setTimeout(resizeend, delta);
+		    }
+		});
+		function resizeend() {
+		    if (new Date() - rtime < delta) {
+		        setTimeout(resizeend, delta);
+		    } else {
+		        timeout = false;
+		        resizeUI();
+		    }               
+		}
+
+		strokePlayer = StrokePlayer(targetCanvasID, 50);	//初始化，每50 毫秒取資料一次畫點。
+/*
+		$(window).resize(function() {
+			resizeUI();
+		});
+*/
+		//1. 處理 展開 submenu 時
+		//handleShowSubmenu();
+
+		//2. 處理選擇 color 時
+		//handleSelectColor();
+
+		//3. 處理選擇筆觸時
+		//handleSelectPen();
+
+		//4. 處理選擇設定時
+		//handleSelectSetting();
+
+		//5. 處理 play, undo, redo 等動作
+		handlePlayUndoRedo();
+
+		//5. 調整畫面大小，並加入 Canvas
+		resizeUI();
+
+		strokePlayer.reDrawNow(strokes);
+	});
+
+	
+
+	var handlePlayUndoRedo = function() {
+		/* 當選取play */
+		$('div.toolbar > ul > li.play').click(function() {
+			var speed = 1;
+			if ($(this).hasClass('2X'))
+				speed = 2;
+			else if ($(this).hasClass('4X'))
+				speed = 4;
+			else if ($(this).hasClass('1-4X'))
+				speed = 1/4;
+			else if ($(this).hasClass('1-2X'))
+				speed = 1/2;
+
+			replay(speed);
+			$('div.toolbar > ul > li.play').removeClass('selected').removeClass('showsubmenu');
+			$(this).addClass('selected').addClass('showsubmenu');
+		});
+
+	};
+	
+	var resizeUI = function() {
+		//toolbar
+		$('div.toolbar').height($(window).height()).width(70);
+
+		//body
+		var boardWidth = $(window).width() - $($('div.toolbar')[0]).width() -3;
+		var boardHeight = $(window).height() - 3 ;
+		$('div.whiteboard').height(boardHeight).width(boardWidth);
+
+		canvasWidth = boardWidth;
+		canvasHeight = boardHeight ;
+		/* 因為若 Canvas */
+		if ($('div.whiteboard canvas').length == 0) {
+			resetCanvas(canvasWidth, canvasHeight, targetCanvasID);	
+		}
+		else {
+			redraw();
+		}
+	};
+
+	var resetCanvas = function(canvasWidth, canvasHeight, canvasID) {
+		var canvasString = "<canvas id='" + canvasID + "' width='" + canvasWidth + "' height='" + canvasHeight + "' style='padding: 0px; margin: 0px; border: 0px; overflow: hidden;'></canvas>";
+		$(canvasString).appendTo('div.whiteboard');
+		//initCanvasBehavior('#'+ targetCanvasID);
+	};
+
+	/* 重畫畫面 */
+	var redraw = function() {
+		//改變 canvas 大小，會導致 reset canvas
+		$('div.whiteboard').html('');
+		resetCanvas(canvasWidth, canvasHeight, targetCanvasID);
+
+		//再重劃所有點
+		strokePlayer.reDrawNow(strokes);
+		//var player = StrokePlayer(targetCanvasID);
+		//player.reDrawNow(strokes);
+		
+	};
+
+    var clearUCtx = function() {
+    	var answer = confirm("確定要清除畫面嗎？")
+		if (answer){
+			$.get('/canvas/clear_points', function(data) {
+				clearCanvasContent();	//清除畫布上的內容
+	        	strokes =[];	//清除所有筆畫資料
+	        	undoStrokes = [];
+			});
+			
+		}
+    	
+    };
+
+    //清除畫布上的內容
+    var clearCanvasContent = function() {
+    	strokePlayer.clear();
+    	/*
+    	//alert(data);
+		var el = document.getElementById(targetCanvasID);
+  		var ctx = el.getContext("2d");
+    	//ctx.clearRect(0,0,canvasWidth,canvasHeight);
+    	ctx.clearRect(0,0,el.width,el.height);
+    	*/
+    }
+
+    /* 重新播放筆順過程 */ 
+    var replay = function(speed) {
+    	clearCanvasContent();
+
+    	strokePlayer.replay(strokes, 10, speed);
+    	//再重劃所有點，按當時筆劃順序及時間
+		//var player = StrokePlayer(targetCanvasID);
+		//player.replay(strokes,50);
+    };
+
+
+		</script>
+	</body>
+<html>

@@ -1,0 +1,122 @@
+<!doctype html>
+<html>
+	<head>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" >
+		<meta charset="utf-8" >
+		<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0/jquery.mobile-1.0.min.css" />
+		<!-- bootstrap css -->
+		<link href="/css/bootstrap.min.css" rel="stylesheet" media="screen" >
+		<link href="/css/default.css" rel="stylesheet" >
+		<script>
+			var sket_uqid = "<%= @sket.uqid %>";
+			var sket_name ="<%= @sket.name %>";
+			var sket_content = <%= @sket.content.to_json.html_safe %>
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<div class="toolbar">
+				<ul class="navigation">
+					<li class="play 1X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							播放
+						</a>
+					</li>
+					<li class="play 1-2X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							1/2 X
+						</a>
+					</li>
+					<li class="play 1-4X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							1/4 X
+						</a>
+					</li>
+					<li class="play 2X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							2 X
+						</a>
+					</li>
+					<li class="play 4X" style="margin-top:10px;">
+						<a href="#" title="play">
+							<span></span>
+							4 X
+						</a>
+					</li>
+				</ul>
+			</div>
+
+			<div class="whiteboard" style="width:800px;height:600px;" id="divCanvasContainer">
+				<!-- <canvas id="myCanvas" width="800" height="600" style="padding: 0px; margin: 0px; border: 0px;"></canvas> -->
+			</div>
+
+		</div>
+
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+		<script src="/js/bootstrap.min.js" ></script>
+		<script src="/js/CanvasPainter.js"></script>
+
+		<script>
+
+			/* 檢查 resize 是否結束了 */
+			//var rtime = new Date(1, 1, 2000, 12,00,00);
+			//var timeout = false;
+			//var delta = 200;
+
+			var strokePlayer ;	//專門用來播放筆順的物件
+			var strokes = sket_content;	//所有的筆劃資料
+
+			$(document).ready(function() {
+
+				/*
+					在拖拉更改視窗大小的過程會一直觸發 window.resize 事件，造成效能慢，
+					這段程式碼偵測使用者改變視窗大小的動作已結束之後，才調整 Container 大小
+				 */
+				ischool.WindowResizeHandler.handle(function() {
+					$('#divCanvasContainer').width($(window).width() - $('div.toolbar').width() -3).height($(window).height() -3);
+				});
+
+				//建立播放筆劃的物件
+				strokePlayer = ischool.StrokePlayer.create("divCanvasContainer");	//
+
+				//立刻畫出所有筆劃
+				strokePlayer.drawNow(strokes);
+
+				//處理畫面按鈕事件
+				handlePlayUndoRedo();
+
+				$(window).resize(); //觸發 window resize 事件，好調整 Canvas 到適當大小。
+			});
+
+
+			var handlePlayUndoRedo = function() {
+				/* 當選取play */
+				$('div.toolbar > ul > li.play').click(function() {
+					var speed = 1;
+					if ($(this).hasClass('2X'))
+						speed = 2;
+					else if ($(this).hasClass('4X'))
+						speed = 4;
+					else if ($(this).hasClass('1-4X'))
+						speed = 1/4;
+					else if ($(this).hasClass('1-2X'))
+						speed = 1/2;
+
+					strokePlayer.play( strokes, speed, 10);
+
+					$('div.toolbar > ul > li.play').removeClass('selected').removeClass('showsubmenu');
+					$(this).addClass('selected').addClass('showsubmenu');
+				});
+
+			};
+
+	
+
+		</script>
+	</body>
+<html>

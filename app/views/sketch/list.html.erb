@@ -1,0 +1,44 @@
+<!doctype html>
+<html>
+	<head>
+		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+		<script>
+			var sket_name ="";
+			var sket_uqid="";
+			var sket_content = "";
+
+			$(document).ready(function() {
+				$(window).resize(function() {
+					$('#divContainer').width($(window).width());
+					$('#divContainer').height($(window).height() - $('#divTitle').height());
+				});
+
+				$(window).resize();
+
+				var data_id =  $($('#selSelectPic option')[0]).val();
+				document.getElementById('target').src = "/sketch/show?uqid=" + data_id ;
+			});
+
+			var showPic = function() {
+				var uqid = $('#selSelectPic').val();
+				document.getElementById('target').src = "/sketch/show?uqid=" + uqid ;
+			}
+		</script>
+	</head>
+	<body>
+		<div id="divTitle">
+			<select id="selSelectPic" onchange="showPic();">
+			<% @skets.each do |sket| %>
+				<option value="<%= sket.uqid%>"><%= sket.name %></option>
+			<% end %>
+			</select>
+		</div>
+		<div style="border: 1px solid green;" id="divContainer">
+			<iframe src="" id="target" style="width:100%; height: 95%;">
+				
+			</iframe>
+		</div>
+
+
+	</body>
+</html>

@@ -3,10 +3,7 @@
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 <script src="/js/draw_canvas.js"></script>
-
-<canvas id="myCanvas" width="800" height="600" style="border: 1px solid gray;"></canvas>
-<button onclick="clearUCtx();" >Clear</button>
-<select onchange="setConfig()" id="selColor">
+<select onchange="setConfig();" id="selColor">
 	<option value="#FF0000">red</option>
 	<option value="#00FF00" selected="">green</option>
 	<option value="#0000FF">blue</option>
@@ -16,25 +13,34 @@
 	<option value="10" selected="">10</option>
 	<option value="15">15</option>
 </select>
+<span>hello , somewhere</span>
+<canvas id="myCanvas" width="800" height="600" style="border: 1px solid gray;"></canvas>
+<button onclick="clearUCtx();" >Clear</button>
+
 <div id="result" style="width:400px; height:400px; overflow:auto;">
 	
 </div>
 
 <script>
 
+	var currentLine = $('#selBold').val();
+	var currentColor = $('#selColor').val();
+
 	$(document).ready(function() {
 
 		//$('#myCanvas').width($(window).width()).height($(window).height());
 
-		defineTouchDrawing();
-		defineMouseDrawing();
+		//defineTouchDrawing();
+		//defineMouseDrawing();
 
 		var points = [];
 
 		//套用 Touch 畫圖行為
 		$('#myCanvas').drawTouch({
 			
-			lineWidth : 4 ,
+			lineWidth : $('#selBold').val() ,
+
+			lineColor : $('#selColor').val() ,
 
 			onStart : function(evt) {
 				//$('#result').html('');
@@ -48,7 +54,8 @@
 			},
 
 			onEnd : function() {
-				var jsonString = JSON.stringify(points);
+				var data = { color: $('#selColor').val() , pen: $('#selBold').val(), points:points};
+				var jsonString = JSON.stringify(data);
 				publish(jsonString);
 
 				$('<div>' + jsonString + '</div>').appendTo('#result');
@@ -63,15 +70,13 @@
 
 		//canvasTouch.setStrokeStyle('#FF0000');	//set to red color
 
-		var currentLine = 10;
-		var currentColor = '#0000FF';
 
 		//套用 Mouse 畫圖行為
 		$('#myCanvas').drawMouse({
 			
-			lineWidth : 4 ,
+			lineWidth : currentLine ,
 
-			lineColor : '#FF0000',
+			lineColor : currentColor,
 
 			onStart : function(evt) {
 				$('#result').html('');
@@ -85,7 +90,8 @@
 			},
 
 			onEnd : function() {
-				var jsonString = JSON.stringify(points);
+				var data = { color: currentColor , pen: currentLine, points:points};
+				var jsonString = JSON.stringify(data);
 				publish(jsonString);
 
 				$('<div>' + jsonString + '</div>').appendTo('#result');

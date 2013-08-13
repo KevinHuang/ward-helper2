@@ -1,4 +1,11 @@
 WardHelper2::Application.routes.draw do
+  get "sketch/list"
+  get "sketch/new"
+  get "sketch/show"
+  post "sketch/save"
+  get "whiteboard/index"
+  get "whiteboard/list"
+  get "whiteboard/replay"
   get "canvas/touch"
   get "canvas/touch_student"
   get "canvas/draw"
