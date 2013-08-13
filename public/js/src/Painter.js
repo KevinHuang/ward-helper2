@@ -16,6 +16,7 @@ ischool.Painter.create = function(options) {
 	//處理 window.resize 事件
 	strokePlayer.setCanvasResizeHandler(function() {
 		initCanvasBehavior();
+		strokePlayer.drawNow(strokes);
 	});
 
 	var canvasID = strokePlayer.getCanvasID();

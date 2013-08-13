@@ -2,22 +2,27 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
+<script src="/js/CanvasPainter.js"></script>
 
-<canvas id="myCanvas" width="800" height="600" style="border: 1px solid gray;"></canvas>
+<div id="divCanvasContainer" style="width:800px;height:600px; border: 1px solid gray;">
+</div>
+
+<!-- <canvas id="myCanvas" width="800" height="600" style="border: 1px solid gray;"></canvas> -->
 <div id="result" style="width:400px; height:400px; overflow:auto;">
 	
 </div>
 
 <script src="https://pubnub.a.ssl.fastly.net/pubnub-3.5.3.min.js"></script>
-<script src="/js/stroke_player.js"></script>
+<!-- <script src="/js/stroke_player.js"></script> -->
 
 <!-- Use WebSocket Constructor for a New Socket Connection -->
 <script>
-	var player ;
+	var strokePlayer ;
 
 	(function() {
 
-		player = StrokePlayer('myCanvas', 100);
+		strokePlayer = ischool.StrokePlayer.create("divCanvasContainer");	//
+		//player = StrokePlayer('myCanvas', 100);
 
 	    /* 'wss://ORIGIN/PUBLISH_KEY/SUBSCRIBE_KEY/CHANNEL' */
 	    WebSocket  = PUBNUB.ws;
@@ -119,8 +124,8 @@
 		$("<div>" + msg + "</div>").appendTo('#result');
 	};
 
-	var draw = function(points) {
-		player.playStroke(points);
+	var draw = function(stroke) {
+		strokePlayer.addStroke(stroke);
 		/*
 		if (points.length == 0)
 			return ;

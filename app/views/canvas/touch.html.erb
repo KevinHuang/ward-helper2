@@ -2,7 +2,9 @@
 <link rel="stylesheet" href="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.css" />
 <script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 <script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
-<script src="/js/draw_canvas.js"></script>
+<script src="/js/CanvasPainter.js" ></script>
+<!-- <script src="/js/draw_canvas.js"></script> -->
+
 <select onchange="setConfig();" id="selColor">
 	<option value="#FF0000">red</option>
 	<option value="#00FF00" selected="">green</option>
@@ -14,11 +16,12 @@
 	<option value="15">15</option>
 </select>
 <span>hello , somewhere</span>
-<canvas id="myCanvas" width="800" height="600" style="border: 1px solid gray;"></canvas>
+<div id="divCanvasContainer" style="width:800px;height:600px; border: 1px solid gray;">
+</div>
+<!-- <canvas id="myCanvas" width="800" height="600" style="border: 1px solid gray;"></canvas> -->
 <button onclick="clearUCtx();" >Clear</button>
 
 <div id="result" style="width:400px; height:400px; overflow:auto;">
-	
 </div>
 
 <script>
@@ -26,92 +29,42 @@
 	var currentLine = $('#selBold').val();
 	var currentColor = $('#selColor').val();
 
+	var painter ;	
+
 	$(document).ready(function() {
 
-		//$('#myCanvas').width($(window).width()).height($(window).height());
-
-		//defineTouchDrawing();
-		//defineMouseDrawing();
-
-		var points = [];
-
-		//套用 Touch 畫圖行為
-		$('#myCanvas').drawTouch({
-			
-			lineWidth : $('#selBold').val() ,
-
-			lineColor : $('#selColor').val() ,
-
-			onStart : function(evt) {
-				//$('#result').html('');
-				var html = "<div> === Start  === </div>" ;
-				$(html).appendTo('#result');
-				points=[];	//reset 
-			},
-
-			onDrawing : function(evt) {
-				points.push(evt);
-			},
-
-			onEnd : function() {
-				var data = { color: $('#selColor').val() , pen: $('#selBold').val(), points:points};
-				var jsonString = JSON.stringify(data);
-				publish(jsonString);
-
-				$('<div>' + jsonString + '</div>').appendTo('#result');
-
-				var html = "<div> === End  === </div>" ;
-				$(html).appendTo('#result');
-			}
-
+		/* 處理 Window Resize 事件，確定 Window Resize 後才會觸發事件，而不會在 Window Resize 過程中一直觸發，影響效能 */
+		ischool.WindowResizeHandler.handle(function() {
+			$('#divCanvasContainer').width($(window).width() - $('div.toolbar').width() -3).height($(window).height() -3);
 		});
 
-		//$('#myCanvas').drawTouch({ lineColor : '#0000FF', lineWidth : 10 });
-
-		//canvasTouch.setStrokeStyle('#FF0000');	//set to red color
-
-
-		//套用 Mouse 畫圖行為
-		$('#myCanvas').drawMouse({
-			
-			lineWidth : currentLine ,
-
-			lineColor : currentColor,
-
-			onStart : function(evt) {
-				$('#result').html('');
-				var html = "<div> === Start  === </div>" ;
-				$(html).appendTo('#result');
-				points=[];
-			},
-
-			onDrawing : function(evt) {
-				points.push(evt);
-			},
-
-			onEnd : function() {
-				var data = { color: currentColor , pen: currentLine, points:points};
-				var jsonString = JSON.stringify(data);
+		/* 建立小畫家物件 */
+		painter = ischool.Painter.create({
+			containerID : 'divCanvasContainer',
+			penSize : 4,
+			penColor : '#000000',
+			/* 每一筆劃完成後就會觸發此事件，可用來即時同步各個畫面 */
+			afterStroke : function(stroke) {
+				//console.log("===  after stroke ==");
+				//console.log(JSON.stringify(stroke));
+				var jsonString = JSON.stringify(stroke);
 				publish(jsonString);
-
-				$('<div>' + jsonString + '</div>').appendTo('#result');
-
-				var html = "<div> === End  === </div>" ;
-				$(html).appendTo('#result');
 			}
 		});
 
-		//change line color and line width ...
-		//$('#myCanvas').drawMouse({lineWidth : 10, lineColor : '#0000FF'  });
-		
+		$(window).resize();
 
 	});
 
 	var setConfig = function() {
 		currentLine = $('#selBold').val();
 		currentColor = $('#selColor').val();
-		$('#myCanvas').drawMouse({lineWidth : currentLine, lineColor : currentColor  });
-		$('#myCanvas').drawTouch({ lineColor : currentColor, lineWidth : currentLine });
+
+		painter.setPenColor(currentColor);
+		painter.setPenSize(currentLine);
+
+		//$('#myCanvas').drawMouse({lineWidth : currentLine, lineColor : currentColor  });
+		//$('#myCanvas').drawTouch({ lineColor : currentColor, lineWidth : currentLine });
 	};
 
 
@@ -138,14 +91,13 @@
     	var answer = confirm("確定要清除畫面嗎？")
 		if (answer){
 			$.get('/canvas/clear_points', function(data) {
+				painter.clean();
 				//alert(data);
-				var el = document.getElementsByTagName("canvas")[0];
-		  		var ctx = el.getContext("2d");
-	        	ctx.clearRect(0,0,800,600);
+				//var el = document.getElementsByTagName("canvas")[0];
+		  		//var ctx = el.getContext("2d");
+	        	//ctx.clearRect(0,0,800,600);
 			});
-			
 		}
-    	
     };
 
 </script>

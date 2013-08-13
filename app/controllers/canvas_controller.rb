@@ -5,6 +5,7 @@ class CanvasController < ApplicationController
 
 	protect_from_forgery :except => :save_points
 	protect_from_forgery :except => :get_points 
+  layout false
 
   def touch
   end

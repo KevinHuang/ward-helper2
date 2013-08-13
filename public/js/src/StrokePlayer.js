@@ -150,7 +150,7 @@ ischool.StrokePlayer.create = function(containerID) {
 				return ;
 
 			/* 傳入要畫的點集合，以及畫完後要呼叫的函數 */
-			var painter = Painter(stroke, playByOrder) ;
+			var painter = StrokePainter(canvasID,stroke, playByOrder) ;
 			if (painter) {
 				playerQueue.push(painter);
 			}
