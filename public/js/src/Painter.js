@@ -34,9 +34,6 @@ ischool.Painter.create = function(options) {
 			lineColor : penColor,
 
 			onStart : function(evt) {
-				//$('#result').html('');
-				//var html = "<div> === Start  === </div>" ;
-				//$(html).appendTo('#result');
 				points=[];
 			},
 
@@ -64,9 +61,6 @@ ischool.Painter.create = function(options) {
 			lineColor : penColor,
 
 			onStart : function(evt) {
-				//$('#result').html('');
-				//var html = "<div> === Start  === </div>" ;
-				//$(html).appendTo('#result');
 				points=[];	//reset 
 			},
 
@@ -81,13 +75,6 @@ ischool.Painter.create = function(options) {
 
 				if (afterStrokeHandler)
 					afterStrokeHandler(stroke);
-				//var jsonString = JSON.stringify(stroke);
-				//publish(jsonString);
-
-				//$('<div>' + jsonString + '</div>').appendTo('#result');
-
-				//var html = "<div> === End  === </div>" ;
-				//$(html).appendTo('#result');
 			}
 		});
 	};
@@ -158,6 +145,10 @@ ischool.Painter.create = function(options) {
 
 		getStrokePlayer : function() {
 			return strokePlayer ;
+		},
+
+		setBackgroundImage : function( bgOptions ) {
+			strokePlayer.setBackgroundImage(bgOptions);
 		}
 	}
 }

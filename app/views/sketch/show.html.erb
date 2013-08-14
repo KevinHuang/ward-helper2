@@ -59,6 +59,13 @@
 		<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>
 		<script src="/js/bootstrap.min.js" ></script>
+		<!-- 
+		<script src="/js/src/CanvasResizer.js"></script>
+		<script src="/js/src/WindowResizeHandler.js"></script>
+		<script src="/js/src/StrokePlayer.js"></script>
+		<script src="/js/src/draw_canvas.js"></script>
+		<script src="/js/src/Painter.js"></script>
+		-->
 		<script src="/js/CanvasPainter.js"></script>
 
 		<script>
@@ -86,6 +93,12 @@
 
 				//立刻畫出所有筆劃
 				strokePlayer.drawNow(strokes);
+
+				strokePlayer.setBackgroundImage({
+					imageUrl : "/images/penbook1.png", 
+					repeat : "no-repeat",
+					position : "top left"
+				});
 
 				//處理畫面按鈕事件
 				handlePlayUndoRedo();

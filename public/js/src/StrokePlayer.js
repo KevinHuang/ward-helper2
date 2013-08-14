@@ -165,6 +165,20 @@ ischool.StrokePlayer.create = function(containerID) {
 
 		setCanvasResizeHandler : function(afterCanvasResizedHandler) {
 			afterCanvasResize = afterCanvasResizedHandler
+		},
+
+		setBackgroundImage : function(bgOptions) {
+			var $container = $('#' + containerID) ;
+			if (bgOptions.color)
+				$container.css("background-color", bgOptions.color);
+			if (bgOptions.imageUrl)
+				$container.css("background-image", "url(" + bgOptions.imageUrl + ")" );
+			if (bgOptions.repeat)
+				$container.css("background-repeat", bgOptions.repeat);
+			if (bgOptions.position)
+				$container.css("background-position", bgOptions.position);
+			if (bgOptions.size)
+				$container.css("background-size", bgOptions.size);
 		}
 	};
 }
