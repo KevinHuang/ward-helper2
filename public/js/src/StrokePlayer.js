@@ -179,6 +179,14 @@ ischool.StrokePlayer.create = function(containerID) {
 				$container.css("background-position", bgOptions.position);
 			if (bgOptions.size)
 				$container.css("background-size", bgOptions.size);
+		},
+
+		getImageDataUrl : function() {
+			var elCanvas = document.getElementById(canvasID);
+			if (elCanvas)
+				return elCanvas.toDataURL("image/png");
+			else
+				return undefined;
 		}
 	};
 }

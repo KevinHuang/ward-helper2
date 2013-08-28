@@ -149,6 +149,10 @@ ischool.Painter.create = function(options) {
 
 		setBackgroundImage : function( bgOptions ) {
 			strokePlayer.setBackgroundImage(bgOptions);
+		},
+
+		getImageDataUrl : function() {
+			return strokePlayer.getImageDataUrl();
 		}
 	}
 }

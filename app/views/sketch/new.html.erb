@@ -144,6 +144,12 @@
 							Redo
 						</a>
 					</li>
+					<li class="imageData">
+						<a href="#" title="imageData">
+							<span></span>
+							Data
+						</a>
+					</li>
 				</ul>
 			</div>
 
@@ -156,7 +162,7 @@
 		<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
 		<!--<script src="http://code.jquery.com/mobile/1.3.2/jquery.mobile-1.3.2.min.js"></script>-->
 		<script src="/js/bootstrap.min.js" ></script>
-		<script src="/js/CanvasPainter.js" ></script>
+		<script src="/js/CanvasPainter.min.js" ></script>
 		<!--
 		<script src="/js/src/WindowResizeHandler.js"></script>
 		<script src="/js/src/CanvasResizer.js"></script>
@@ -341,6 +347,13 @@
 				});
 				$('div.toolbar > ul > li.redo').click(function() {
 					painter.redo();
+					$(this).removeClass('selected').removeClass('showsubmenu');
+				});
+
+				$('div.toolbar > ul > li.imageData').click(function() {
+					var data = painter.getImageDataUrl();
+					if (data)
+						alert('已經取得 image data !');
 					$(this).removeClass('selected').removeClass('showsubmenu');
 				});
 			};
