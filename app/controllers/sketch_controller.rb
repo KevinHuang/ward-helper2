@@ -9,7 +9,9 @@ class SketchController < ApplicationController
   end
 
   def new
-    
+      @lang = params[:lang]
+      @lang = "eng"  if @lang.nil?
+      
   end
 
   def show
