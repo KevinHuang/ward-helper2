@@ -58,15 +58,17 @@
 			        ctx.stroke();
 			        raiseDrawingCallback(x, y, _lineColor);
 			        //console.log(options);
+			        //alert("touchmove");
 			    };
 
 			    var end = function(e) {
+			    	//alert("touchend");
 			    	if (options.onEnd)
 			    		options.onEnd();
 			    }
-			    $(this).touchstart(start);
-			    $(this).touchmove(move);
-			    $(this).touchend(end);
+			    $(this).on("touchstart", start);
+			    $(this).on("touchmove", move);
+			    $(this).on("touchend", end);
 			});
 		};
 	//};
@@ -124,6 +126,7 @@
 
 			        raiseDrawingCallback(x, y, options.lineColor);
 			    };
+			    
 			    var move = function(e) {
 			        if(clicked){
 			        	//var x = e.pageX;
@@ -142,15 +145,16 @@
 			            raiseDrawingCallback(x, y, _lineColor);
 			        }
 			    };
-			    var stop = function(e) {
+
+			    var end = function(e) {
 			        clicked = 0;
 
 			        if (options.onEnd)
 			        	options.onEnd();
 			    };
-			    $(this).mousedown(start);
-			    $(this).mousemove(move);
-			    $(this).mouseup(stop);
+			    $(this).on("mousedown", start);
+			    $(this).on("mousemove", move);
+			    $(this).on("mouseup", end);
 
 			});
 		};
