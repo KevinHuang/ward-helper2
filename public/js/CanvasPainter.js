@@ -638,7 +638,9 @@ ischool.Painter.create = function(options) {
 		//2. 套用手指繪圖的邏輯 (適用平板)
 		registerTouchDrawing();
 
-	}
+	};
+
+	initCanvasBehavior();
 
 	/* 改變畫布的顏色和畫筆粗細 */
 	var changeColorPen = function() {
