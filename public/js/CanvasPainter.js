@@ -485,10 +485,10 @@ var StrokePainter = function(canvasID, stroke, finishHandler) {
 			ctx.lineJoin = 'round';
 			ctx.lineCap = "round";
 			ctx.moveTo(initPt.x, initPt.y);
-			console.log( " move to (" + initPt.x + "," + initPt.y + ")");
+			//console.log( " move to (" + initPt.x + "," + initPt.y + ")");
 		}
 
-		console.log(' == beginDraw ==  currentIndex : ' + currentIndex );
+		//console.log(' == beginDraw ==  currentIndex : ' + currentIndex );
 		if (pts.length ==0)
 			return ;
 
@@ -505,7 +505,7 @@ var StrokePainter = function(canvasID, stroke, finishHandler) {
 			//判斷是否中斷
 			if (isInterrupted) {
 				status = 2;
-				console.log(' == isInterrupted ==  currentIndex : ' + currentIndex );
+				//console.log(' == isInterrupted ==  currentIndex : ' + currentIndex );
 				if (finishHandler)
 					finishHandler();
 				return ;
@@ -518,7 +518,7 @@ var StrokePainter = function(canvasID, stroke, finishHandler) {
 				//ctx.lineWidth = pt.lw ;
 				ctx.lineTo(pt.x, pt.y);
 				ctx.stroke();
-				console.log(i + " : (" + pt.x + "," + pt.y + ") , count :" + pts.length + "," + timeDiff + "," + currentTimeDiff);
+				//console.log(i + " : (" + pt.x + "," + pt.y + ") , count :" + pts.length + "," + timeDiff + "," + currentTimeDiff);
 			}
 			else
 				break;
