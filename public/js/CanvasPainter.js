@@ -311,6 +311,8 @@ ischool.StrokePlayer.create = function(containerID) {
 					ctx.beginPath();  //若不加此行則全部會變成最後的顏色及粗細
 					ctx.lineWidth = stroke.pen;
 					ctx.strokeStyle = stroke.color ;
+					ctx.lineJoin = 'round';
+			        ctx.lineCap = "round";
 
 					var initPt = stroke.points[0]
 					ctx.moveTo(initPt.x, initPt.y);
@@ -480,6 +482,8 @@ var StrokePainter = function(canvasID, stroke, finishHandler) {
 			ctx.beginPath(); 
 			ctx.lineWidth = lineWidth;
 			ctx.strokeStyle = lineColor ;
+			ctx.lineJoin = 'round';
+			ctx.lineCap = "round";
 			ctx.moveTo(initPt.x, initPt.y);
 			console.log( " move to (" + initPt.x + "," + initPt.y + ")");
 		}

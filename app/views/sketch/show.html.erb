@@ -77,6 +77,7 @@
 
 			var strokePlayer ;	//專門用來播放筆順的物件
 			var strokes = sket_content;	//所有的筆劃資料
+			var painter ;
 
 			$(document).ready(function() {
 
@@ -87,6 +88,24 @@
 				ischool.WindowResizeHandler.handle(function() {
 					$('#divCanvasContainer').width($(window).width() - $('div.toolbar').width() -3).height($(window).height() -3);
 				});
+
+				/* 建立小畫家物件 */
+				/*
+				painter = ischool.Painter.create({
+					containerID : 'divCanvasContainer',
+					penSize : 4,
+					penColor : '#000000',
+					// 每一筆劃完成後就會觸發此事件，可用來即時同步各個畫面 /
+					afterStroke : function(stroke) {
+						//console.log("===  after stroke ==");
+						//console.log(JSON.stringify(stroke));
+					}
+				});
+
+				painter.setStrokes(strokes);
+				painter.replay();
+*/
+				
 
 				//建立播放筆劃的物件
 				strokePlayer = ischool.StrokePlayer.create("divCanvasContainer");	//
@@ -99,6 +118,8 @@
 					repeat : "no-repeat",
 					position : "top left"
 				});
+
+				
 
 				//處理畫面按鈕事件
 				handlePlayUndoRedo();
@@ -121,6 +142,7 @@
 						speed = 1/2;
 
 					strokePlayer.play( strokes, speed, 10);
+					//painter.replay();
 
 					$('div.toolbar > ul > li.play').removeClass('selected').removeClass('showsubmenu');
 					$(this).addClass('selected').addClass('showsubmenu');
