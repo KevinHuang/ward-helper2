@@ -155,6 +155,7 @@ ischool.CanvasResizer.handle = function(options) {
 			    $(this).on("touchstart", start);
 			    $(this).on("touchmove", move);
 			    $(this).on("touchend", end);
+			    $(this).on("touchleave", end);
 			});
 		};
 	//};
@@ -238,9 +239,11 @@ ischool.CanvasResizer.handle = function(options) {
 			        if (options.onEnd)
 			        	options.onEnd();
 			    };
+
 			    $(this).on("mousedown", start);
 			    $(this).on("mousemove", move);
 			    $(this).on("mouseup", end);
+			    $(this).on("mouseout", end);
 
 			});
 		};
